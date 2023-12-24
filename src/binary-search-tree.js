@@ -40,31 +40,104 @@ class BinarySearchTree {
     }
   }
 
-  has(/* data */) {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  has(data) {
+    return this.search(this._root, data); //запускаем поиск от корня
   }
 
-  find(/* data */) {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+    search(node, value) {
+      if (node === null) { //если мы достигли листьев и не нашли значение
+        return false;
+      }
+      if (node.data === value) {//если нашли искомый узел с первого шага
+        return true;
+      }
+      if (value < node.data) { //если искомое значение меньше текущего узлаб идем влево
+        return this.search(node.left, value);
+      } else { // иначе идем вправо
+        return this.search(node.right, value);
+      }
+    }
+
+  find(data) {
+    return this.findNode(this._root, data); //запускаем поиск от корня
   }
 
-  remove(/* data */) {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  findNode(node, value) {
+    if (node === null) { //если мы достигли листьев и не нашли значение
+      return null;
+    }
+    if (node.data === value) {//если нашли искомый узел с первого шага
+      return node;
+    }
+    if (value < node.data) { //если искомое значение меньше текущего узлаб идем влево
+      return this.findNode(node.left, value);
+    } else { // иначе идем вправо
+      return this.findNode(node.right, value);
+    }
+  } 
+
+  remove(data) {
+    this._root = this.removeNode(this._root, data); //запускаем удаление от корня дерева
+  }
+
+  removeNode(node, value) {
+    if (node === null) { //если мы достигли листьев и не нашли значение
+      return null;
+    }
+    if (value === node.data) { // у удаляемого узла нет потомков
+      if (node.left === null && node.right === null) {
+        return null;
+      }
+
+      if (node.left === null) { // у удаляемого узла 1 потомок
+        return node.right;
+      }
+
+      if (node.right === null) {
+        return node.left;
+      }
+                                // у удаляемого узла 2 потомка
+      const minRightNode = this.findMinNode(node.right); //находим наименьший узел в правом поддереве
+      node.data = minRightNode.data; // присваиваем его значение узлу который хотим удалить
+      node.right = this.removeNode(node.right, minRightNode.data); // удаляем ранее найденный наименьший узел правого поддерева
+    } else if (value < node.data) {
+      node.left = this.removeNode(node.left, value); // идем в левое поддерево для удаление
+    } else {
+      node.right = this.removeNode(node.right, value); // идем в правое дерево для удаления
+    }
+    return node;
+  }
+
+  findMinNode(node) {
+    while (node.left !== null) { // находим узел с наименьшим значениемб двигаясь влево
+      node = node.left;
+    }
+    return node;
   }
 
   min() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+    if (!this.root) {
+      return null; // в случае пустого дерева возвращаем null
+    }
+    let currentNode = this._root;
+    while (currentNode.left !== null) {
+      currentNode = currentNode.left; //двигаемся вглубь дерева до нижнего левого листа
+    }
+    return currentNode.data; // возвращаем данные из наименьшнго узла
   }
 
   max() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+    if (!this.root) {
+      return null; // в случае пустого дерева возвращаем null
+    }
+    let currentNode = this._root;
+    while (currentNode.right !== null) {
+      currentNode = currentNode.right; //двигаемся вглубь дерева до нижнего правого листа
+    }
+    return currentNode.data; // возвращаем данные из наибольшего узла
   }
 }
+
 class Node { // определяем класс Node 
   constructor(data) { 
     this.data = data; //данные узла
